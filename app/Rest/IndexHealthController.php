@@ -89,10 +89,7 @@ class IndexHealthController extends BaseController
         $filter    = sanitize_text_field((string) $request->get_param('filter'));
         $inspector = new \NexoraPulse\Modules\IndexInspector();
 
-        $demo  = $inspector->demo_mode_active();
-        $rows  = $demo
-            ? $inspector->demo_list_for_site($site_id)
-            : $inspector->list_for_site($site_id);
+        $rows = $inspector->list_for_site($site_id);
 
         $filtered = match ($filter) {
             'rejected'  => array_values(array_filter($rows, fn ($r) => !$r['is_indexed'])),
@@ -102,30 +99,20 @@ class IndexHealthController extends BaseController
         };
 
         return $this->success([
-            'items'     => $filtered,
-            'total'     => count($filtered),
-            'demo_mode' => $demo,
+            'items' => $filtered,
+            'total' => count($filtered),
         ]);
     }
 
     public function get_summary(WP_REST_Request $request): WP_REST_Response
     {
         $inspector = new \NexoraPulse\Modules\IndexInspector();
-        if ($inspector->demo_mode_active()) {
-            return $this->success($inspector->demo_summary($this->get_site_id()));
-        }
         return $this->success($inspector->summary($this->get_site_id()));
     }
 
     public function get_patterns(WP_REST_Request $request): WP_REST_Response
     {
         $inspector = new \NexoraPulse\Modules\IndexInspector();
-        if ($inspector->demo_mode_active()) {
-            return $this->success([
-                'patterns'  => $inspector->demo_detect_patterns($this->get_site_id()),
-                'demo_mode' => true,
-            ]);
-        }
         return $this->success([
             'patterns' => $inspector->detect_patterns($this->get_site_id()),
         ]);

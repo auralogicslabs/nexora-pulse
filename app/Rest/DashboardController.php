@@ -140,22 +140,6 @@ class DashboardController extends BaseController
     {
         $settings = new \NexoraPulse\Services\SettingsService();
 
-        // Demo Mode short-circuits — returns realistic sample CWV data so the
-        // Performance panel on the dashboard renders without a real API key.
-        if ((int) $settings->get('demo_mode', 0) === 1 && empty($settings->get_encrypted('pagespeed_api_key'))) {
-            return $this->success([
-                'lcp'        => 2400,
-                'inp'        => 180,
-                'cls'        => 0.08,
-                'ttfb'       => 480,
-                'ttfb_lab'   => 480,
-                'has_field'  => true,
-                'score'      => 78,
-                'fetched_at' => current_time('mysql'),
-                'demo_mode'  => true,
-            ]);
-        }
-
         $cached = get_transient('nexora_pulse_cwv_data');
         if (is_array($cached)) {
             return $this->success($cached);

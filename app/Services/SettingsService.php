@@ -19,10 +19,6 @@ final class SettingsService
         'ai_model'          => 'gpt-4o-mini',
         'gsc_connected'     => false,
         'gsc_site_url'      => '',
-        // Demo Mode — when enabled, surfaces that normally need GSC / PageSpeed
-        // (Index Doctor, CWV panel) render with realistic sample data instead.
-        // Useful for local demos, screenshots, wp.org review, and pre-OAuth testing.
-        'demo_mode'         => 0,
         // SEO head injection settings
         'twitter_site'      => '',
         'verify_google'     => '',
@@ -62,12 +58,11 @@ final class SettingsService
             'ai_provider', 'ai_model',
             'twitter_site', 'verify_google', 'verify_bing', 'verify_yandex',
             'ga4_id', 'gtm_id',
-            'demo_mode',
         ];
         foreach ($allowed as $key) {
             if (isset($data[$key])) {
                 $current[$key] = match ($key) {
-                    'notify_admin', 'demo_mode' => (int) (bool) $data[$key],
+                    'notify_admin'      => (int) (bool) $data[$key],
                     'notify_email'      => sanitize_email($data[$key]),
                     'scan_frequency'    => in_array($data[$key], ['hourly', 'twicedaily', 'daily', 'weekly'], true) ? $data[$key] : 'daily',
                     default             => sanitize_text_field($data[$key]),

@@ -83,19 +83,8 @@ class GscController extends BaseController
 
     public function get_status(WP_REST_Request $request): WP_REST_Response
     {
-        $gsc       = new \NexoraPulse\Modules\GscSync();
-        $inspector = new \NexoraPulse\Modules\IndexInspector();
-        $status    = $gsc->get_connection_status();
-        // Demo Mode lets the Index Doctor render with sample data even when GSC
-        // isn't actually connected — so we surface a "virtual connection".
-        if (!$status['connected'] && $inspector->demo_mode_active()) {
-            $status['connected']    = true;
-            $status['demo_mode']    = true;
-            $status['site_url']     = (string) get_site_url();
-            $status['last_synced']  = current_time('mysql');
-        } else {
-            $status['demo_mode']    = false;
-        }
+        $gsc    = new \NexoraPulse\Modules\GscSync();
+        $status = $gsc->get_connection_status();
         return $this->success($status);
     }
 

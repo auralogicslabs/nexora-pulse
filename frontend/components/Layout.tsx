@@ -6,7 +6,7 @@ import {
   BarChart2, Bot, ArrowLeftRight, Settings,
   ChevronLeft, ChevronRight, Wrench, HelpCircle,
   Stethoscope, Image as ImageIcon, FileSearch, Plug2,
-  FlaskConical, ShieldCheck,
+  ShieldCheck,
 } from 'lucide-react';
 import { useAppStore } from '../lib/store';
 import { api, wpContext } from '../lib/api';
@@ -58,47 +58,6 @@ function GlobalScanBar() {
         </span>
         <span className="ml-auto text-xs font-bold text-brand-600 tabular-nums">{pct}%</span>
       </div>
-    </div>
-  );
-}
-
-// ── Demo Mode banner — global indicator when sample data is live ────
-function DemoModeBanner() {
-  const { data } = useQuery({
-    queryKey: ['settings'],
-    queryFn: () => api.get<any>('settings'),
-    staleTime: 30_000,
-  });
-  // Only show when demo_mode is on AND no real GSC token exists — matches
-  // the backend's "demo_mode_active" predicate.
-  const gsc = useQuery({
-    queryKey: ['gsc-status'],
-    queryFn: () => api.get<any>('gsc/status'),
-    staleTime: 30_000,
-  });
-
-  const demoOn = !!data?.demo_mode;
-  const realConnected = !!gsc.data && !gsc.data.demo_mode && !!gsc.data.connected;
-
-  if (!demoOn || realConnected) return null;
-
-  return (
-    <div
-      className="flex items-center gap-2.5 px-4 py-1.5 text-xs font-bold"
-      style={{
-        background: 'linear-gradient(90deg, #FFE6D5 0%, #FFF4ED 100%)',
-        borderBottom: '1px solid #FECCAA',
-        color: '#9A4411',
-      }}
-    >
-      <FlaskConical className="w-3.5 h-3.5 flex-shrink-0" />
-      <span>Demo Mode is on — Index Doctor and Core Web Vitals are showing sample data.</span>
-      <a
-        href="#/settings"
-        className="ml-auto text-brand-700 hover:text-brand-800 underline font-bold"
-      >
-        Turn off
-      </a>
     </div>
   );
 }
@@ -322,7 +281,6 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         className="flex-1 flex flex-col min-w-0 np-animate-fade-in"
         style={{ minHeight: 'var(--ncx-panel-h)' }}
       >
-        <DemoModeBanner />
         {children}
       </main>
     </div>
