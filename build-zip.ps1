@@ -8,15 +8,17 @@
 # Windows 10+ ships bsdtar (tar.exe), which produces standard forward-slash
 # zip entries. This script stages the release files and zips with tar.
 #
-# Usage:  powershell -ExecutionPolicy Bypass -File build-zip.ps1
+# Usage:  .\build-zip.ps1   (run from the plugin folder)
 
 $ErrorActionPreference = 'Stop'
 
-$src     = $PSScriptRoot
-$release = Join-Path (Split-Path $src -Parent) 'release'
-$stage   = Join-Path $release 'nexora-pulse'
-$zipName = 'nexora-pulse-1.0.0.zip'
-$zipPath = Join-Path $release $zipName
+# Layout: <root>\products\nexora-pulse\  ->  release lives at <root>\release\
+$src      = $PSScriptRoot
+$root     = Split-Path (Split-Path $src -Parent) -Parent
+$relProd  = Join-Path (Join-Path $root 'release') 'nexora-pulse'
+$stage    = Join-Path $relProd 'nexora-pulse'
+$zipName  = 'nexora-pulse-1.0.0.zip'
+$zipPath  = Join-Path $relProd $zipName
 
 # Fresh stage.
 if (Test-Path $stage) { Remove-Item $stage -Recurse -Force }
@@ -37,7 +39,7 @@ foreach ($f in $rootFiles) {
 # Zip with bsdtar from inside the release dir so the archive root is the
 # nexora-pulse/ folder with forward-slash entry paths.
 if (Test-Path $zipPath) { Remove-Item $zipPath -Force }
-Push-Location $release
+Push-Location $relProd
 try {
     & tar.exe -a -cf $zipName 'nexora-pulse'
     if ($LASTEXITCODE -ne 0) { throw "tar failed with exit code $LASTEXITCODE" }
