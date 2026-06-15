@@ -1,0 +1,15 @@
+# Normalize line endings to LF in the repository; check out native on Windows.
+* text=auto eol=lf
+
+# Binary assets — never normalize.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.svg binary
+*.zip binary
+*.woff binary
+*.woff2 binary
+
+# Windows-native scripts keep CRLF.
+*.ps1 text eol=crlf

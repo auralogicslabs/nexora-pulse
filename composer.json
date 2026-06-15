@@ -1,0 +1,18 @@
+{
+    "name": "auralogics/nexora-pulse",
+    "description": "SEO operations console for WordPress — indexing intelligence, neural link graph, duplicate detection, and Search Console insights.",
+    "type": "wordpress-plugin",
+    "license": "GPL-2.0-or-later",
+    "require": {
+        "php": ">=8.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "NexoraPulse\\": "app/"
+        }
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "sort-packages": true
+    }
+}
