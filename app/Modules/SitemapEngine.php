@@ -24,8 +24,11 @@ final class SitemapEngine
 
     public static function maybe_serve(bool $continue, \WP $wp): bool
     {
-        if (($_SERVER['REQUEST_URI'] ?? '') === '/' . self::SLUG ||
-            rtrim($_SERVER['REQUEST_URI'] ?? '', '/') === '/' . self::SLUG) {
+        $request_uri = isset($_SERVER['REQUEST_URI'])
+            ? sanitize_text_field(wp_unslash($_SERVER['REQUEST_URI']))
+            : '';
+        if ($request_uri === '/' . self::SLUG ||
+            rtrim($request_uri, '/') === '/' . self::SLUG) {
             self::output();
             exit;
         }

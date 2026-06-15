@@ -18,7 +18,9 @@ final class Redirects
         }
 
         global $wpdb;
-        $request_uri = $_SERVER['REQUEST_URI'] ?? '';
+        $request_uri = isset($_SERVER['REQUEST_URI'])
+            ? sanitize_text_field(wp_unslash($_SERVER['REQUEST_URI']))
+            : '';
         $site_url    = get_site_url();
         $current_url = trailingslashit($site_url . strtok($request_uri, '?'));
 
