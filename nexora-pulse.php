@@ -1,8 +1,8 @@
 <?php
 /**
- * Plugin Name:       Nexora Pulse – SEO Operations Platform for WordPress
+ * Plugin Name:       Nexora Pulse – SEO Operations Platform
  * Plugin URI:        https://auralogicslabs.com/products/nexora-pulse
- * Description:       Modern SEO toolkit for WordPress with Search Console insights, indexing intelligence, schema, internal linking, duplicate content detection, and SEO opportunity analysis.
+ * Description:       Modern SEO toolkit with Search Console insights, indexing intelligence, schema, internal linking, duplicate content detection, and SEO opportunity analysis.
  * Version:           1.0.0
  * Author:            Auralogics Labs
  * Author URI:        https://auralogicslabs.com

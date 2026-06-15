@@ -162,10 +162,11 @@ class AnalyzerController extends BaseController
         header('Content-Type: text/csv; charset=UTF-8');
         header('Content-Disposition: attachment; filename="' . $filename . '"');
 
-        $out = fopen('php://output', 'w');
-
+        // Build the CSV in memory and echo it. We avoid fopen()/fwrite()/fclose()
+        // on the filesystem (WP_Filesystem cannot stream to php://output anyway);
+        // self::csv_row() RFC-4180-encodes each line.
         // UTF-8 BOM so Excel renders accented characters / emoji correctly.
-        fwrite($out, "\xEF\xBB\xBF");
+        $csv = "\xEF\xBB\xBF";
 
         $headers = [
             'Page Title', 'URL', 'Type', 'Page Status',
@@ -173,7 +174,7 @@ class AnalyzerController extends BaseController
             'Issue', 'Severity', 'Area', 'Why It Matters', 'How To Fix', 'Detected',
             'Last Modified',
         ];
-        fputcsv($out, $headers);
+        $csv .= self::csv_row($headers);
 
         foreach ($rows as $row) {
             $pid  = (int) $row->post_id;
@@ -201,12 +202,12 @@ class AnalyzerController extends BaseController
 
             if (empty($issues)) {
                 // Clean / unscanned page → single summary row, issue columns blank.
-                fputcsv($out, array_merge($summary, ['', '', '', '', '', '', (string) $row->post_modified]));
+                $csv .= self::csv_row(array_merge($summary, ['', '', '', '', '', '', (string) $row->post_modified]));
                 continue;
             }
 
             foreach ($issues as $iss) {
-                fputcsv($out, array_merge($summary, [
+                $csv .= self::csv_row(array_merge($summary, [
                     (string) $iss->title,
                     ucfirst((string) $iss->severity),
                     ucfirst((string) $iss->module),
@@ -218,8 +219,24 @@ class AnalyzerController extends BaseController
             }
         }
 
-        fclose($out);
+        // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- CSV file body, sent with a text/csv download header, not HTML.
+        echo $csv;
         exit;
+    }
+
+    /**
+     * Encode one CSV record (RFC 4180): quote fields, escape embedded quotes,
+     * terminate with CRLF. Used to build the export without filesystem calls.
+     *
+     * @param array<int,string> $fields
+     */
+    private static function csv_row(array $fields): string
+    {
+        $escaped = array_map(
+            static fn ($v) => '"' . str_replace('"', '""', (string) $v) . '"',
+            $fields
+        );
+        return implode(',', $escaped) . "\r\n";
     }
 
     public function get_keyword(WP_REST_Request $request): WP_REST_Response|\WP_Error
@@ -390,7 +407,12 @@ class AnalyzerController extends BaseController
         );
         // phpcs:enable
 
+        // $count_sql / $rows_sql are composed from internal, non-user values
+        // ($issue_sub is already prepared; table/post-type/filter clauses are
+        // hardcoded). Safe to run as-is.
+        // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
         $total = (int) $wpdb->get_var($count_sql);
+        // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
         $rows  = $wpdb->get_results($rows_sql);
 
         // Compute site-wide scan state: have we ever scanned anything? Check both

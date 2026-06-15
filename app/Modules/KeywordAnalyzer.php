@@ -95,6 +95,7 @@ final class KeywordAnalyzer
             $this->build_check(
                 'image_alt',
                 count($alts) > 0
+                    /* translators: %1$d: number of images whose alt text contains the focus keyword; %2$d: total images. */
                     ? sprintf(__('Focus keyword in image alt text (%1$d of %2$d images)', 'nexora-pulse'), $alt_with_kw, count($alts))
                     : __('Focus keyword in image alt text', 'nexora-pulse'),
                 count($alts) === 0 ? null : ($alt_with_kw > 0),

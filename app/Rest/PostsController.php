@@ -142,6 +142,7 @@ class PostsController extends BaseController
 
         $attachment = [
             'post_mime_type' => 'image/png',
+            /* translators: %s: post title the Open Graph image was generated for. */
             'post_title'     => sprintf(__('OG Image for %s', 'nexora-pulse'), get_the_title($post)),
             'post_content'   => '',
             'post_status'    => 'inherit',
@@ -150,12 +151,13 @@ class PostsController extends BaseController
 
         $att_id = wp_insert_attachment($attachment, $filepath, $post_id);
         if (is_wp_error($att_id) || $att_id === 0) {
-            @unlink($filepath);
+            wp_delete_file($filepath);
             return $this->error(__('Could not create media attachment.', 'nexora-pulse'), 500);
         }
 
         $meta = wp_generate_attachment_metadata($att_id, $filepath);
         wp_update_attachment_metadata($att_id, $meta);
+        /* translators: %s: post title the Open Graph image was generated for. */
         update_post_meta($att_id, '_wp_attachment_image_alt', sprintf(__('Open Graph image for %s', 'nexora-pulse'), get_the_title($post)));
 
         $url = (string) wp_get_attachment_url($att_id);

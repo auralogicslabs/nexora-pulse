@@ -1,14 +1,14 @@
-=== Nexora Pulse – SEO Operations Platform for WordPress ===
+=== Nexora Pulse – SEO Operations Platform ===
 Contributors: auralogics
 Tags: seo, search console, schema, indexing, internal linking
 Requires at least: 6.0
-Tested up to: 6.8
+Tested up to: 6.9
 Stable tag: 1.0.0
 Requires PHP: 8.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Modern SEO toolkit for WordPress with Search Console insights, indexing intelligence, schema, internal linking, and duplicate content detection.
+Modern SEO toolkit with Search Console insights, indexing intelligence, schema, internal linking, and duplicate content detection.
 
 == Description ==
 

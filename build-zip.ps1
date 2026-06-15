@@ -26,8 +26,9 @@ New-Item -ItemType Directory -Force $stage | Out-Null
 
 # Production runtime files only. node_modules, frontend source, and dev
 # tooling config are never shipped.
-robocopy "$src\app"    "$stage\app"    /E /NFL /NDL /NJH /NJS | Out-Null
-robocopy "$src\assets" "$stage\assets" /E /NFL /NDL /NJH /NJS | Out-Null
+robocopy "$src\app"       "$stage\app"       /E /NFL /NDL /NJH /NJS | Out-Null
+robocopy "$src\assets"    "$stage\assets"    /E /NFL /NDL /NJH /NJS | Out-Null
+robocopy "$src\languages" "$stage\languages" /E /NFL /NDL /NJH /NJS | Out-Null
 
 $rootFiles = @(
     'nexora-pulse.php', 'readme.txt', 'uninstall.php', 'index.php'

@@ -135,10 +135,14 @@ final class SeoAnalyzer
             $critical + $high
         );
 
+        /* translators: %s: site name. */
         $body  = sprintf(__('Your latest Nexora Pulse SEO scan of %s is complete.', 'nexora-pulse'), $site_name) . "\n\n";
         $body .= __('Issues found:', 'nexora-pulse') . "\n";
+        /* translators: %d: number of critical issues. */
         $body .= '• ' . sprintf(__('%d critical', 'nexora-pulse'), $critical) . "\n";
+        /* translators: %d: number of high-priority issues. */
         $body .= '• ' . sprintf(__('%d high priority', 'nexora-pulse'), $high) . "\n";
+        /* translators: %d: total number of open issues. */
         $body .= '• ' . sprintf(__('%d open issues in total', 'nexora-pulse'), $total) . "\n\n";
         $body .= __('Review and fix them here:', 'nexora-pulse') . "\n" . $admin_url . "\n\n";
         $body .= __('— Nexora Pulse', 'nexora-pulse') . "\n";

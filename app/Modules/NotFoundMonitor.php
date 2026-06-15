@@ -71,8 +71,8 @@ final class NotFoundMonitor
         global $wpdb;
         $table = $wpdb->prefix . 'nexora_pulse_not_found';
         $site  = get_current_blog_id();
-        $ref   = isset($_SERVER['HTTP_REFERER']) ? esc_url_raw((string) $_SERVER['HTTP_REFERER']) : '';
-        $ua    = isset($_SERVER['HTTP_USER_AGENT']) ? substr(sanitize_text_field((string) $_SERVER['HTTP_USER_AGENT']), 0, 255) : '';
+        $ref   = isset($_SERVER['HTTP_REFERER']) ? esc_url_raw(wp_unslash((string) $_SERVER['HTTP_REFERER'])) : '';
+        $ua    = isset($_SERVER['HTTP_USER_AGENT']) ? substr(sanitize_text_field(wp_unslash((string) $_SERVER['HTTP_USER_AGENT'])), 0, 255) : '';
 
         // Upsert — increment hit_count when path is seen again.
         $existing = $wpdb->get_row($wpdb->prepare(
@@ -108,8 +108,7 @@ final class NotFoundMonitor
 
     private static function current_path(): string
     {
-        $uri = isset($_SERVER['REQUEST_URI']) ? (string) $_SERVER['REQUEST_URI'] : '';
-        $uri = sanitize_text_field($uri);
+        $uri = isset($_SERVER['REQUEST_URI']) ? sanitize_text_field(wp_unslash((string) $_SERVER['REQUEST_URI'])) : '';
         $parts = wp_parse_url($uri);
         $path  = (string) ($parts['path'] ?? '');
         $query = isset($parts['query']) ? '?' . (string) $parts['query'] : '';

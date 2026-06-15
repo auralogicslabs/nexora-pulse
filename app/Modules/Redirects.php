@@ -42,7 +42,16 @@ final class Redirects
             $redirect->id
         ));
 
-        wp_redirect(esc_url_raw($redirect->target_url), (int) $redirect->type);
+        // Redirect targets are admin-authored and may legitimately point off-site,
+        // so allow the destination host for this redirect.
+        add_filter('allowed_redirect_hosts', static function (array $hosts) use ($redirect): array {
+            $host = wp_parse_url((string) $redirect->target_url, PHP_URL_HOST);
+            if ($host) {
+                $hosts[] = $host;
+            }
+            return $hosts;
+        });
+        wp_safe_redirect(esc_url_raw($redirect->target_url), (int) $redirect->type);
         exit;
     }
 }

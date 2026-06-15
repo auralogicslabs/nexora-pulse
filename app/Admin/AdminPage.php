@@ -62,10 +62,11 @@ final class AdminPage
                 <strong><?php echo esc_html__('Nexora Pulse', 'nexora-pulse'); ?>:</strong>
                 <?php
                 /* translators: %s: detected SEO plugin name */
-                echo esc_html(sprintf(
+                $notice_text = sprintf(
                     __('%s is active, so Pulse is running in analysis mode — it will not output its own meta tags and cannot create duplicates.', 'nexora-pulse'),
                     $name
-                ));
+                );
+                echo esc_html($notice_text);
                 ?>
                 <a href="<?php echo esc_url($url); ?>"><?php echo esc_html__('View compatibility details', 'nexora-pulse'); ?></a>
             </p>
@@ -219,12 +220,14 @@ final class AdminPage
     public function menu_icon_css(): void
     {
         $icon = esc_url(NEXORA_PULSE_URL . 'assets/img/nexora-icon.png');
-        echo '<style id="nexora-pulse-menu-icon">'
+        $style = '<style id="nexora-pulse-menu-icon">'
            . '#adminmenu #toplevel_page_nexora-pulse .wp-menu-image{'
            . 'background:url("' . $icon . '") center center no-repeat !important;'
            . 'background-size:20px 20px !important;}'
            . '#adminmenu #toplevel_page_nexora-pulse .wp-menu-image img,'
            . '#adminmenu #toplevel_page_nexora-pulse .wp-menu-image:before{display:none !important;}'
            . '</style>';
+        // $icon is escaped with esc_url(); the rest is a static CSS literal.
+        echo wp_kses($style, ['style' => ['id' => true]]);
     }
 }

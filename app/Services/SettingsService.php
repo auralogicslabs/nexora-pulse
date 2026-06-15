@@ -116,6 +116,7 @@ final class SettingsService
         $current['license_key']  = sanitize_text_field($key);
         $current['license_tier'] = $tier;
         update_site_option(self::OPTION_KEY, $current);
+        /* translators: %s: license tier name (e.g. PRO). */
         return ['tier' => $tier, 'message' => sprintf(__('License activated (%s).', 'nexora-pulse'), strtoupper($tier))];
     }
 

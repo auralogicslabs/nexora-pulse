@@ -108,6 +108,7 @@ final class IndexInspector
         $body = json_decode((string) wp_remote_retrieve_body($response), true);
 
         if ($code !== 200) {
+            /* translators: %d: HTTP status code returned by Google. */
             $msg = $body['error']['message'] ?? sprintf(__('Google returned HTTP %d.', 'nexora-pulse'), $code);
             // 401/403 → credentials problem, not a per-URL problem. Use a
             // distinct code so bulk scans can abort instead of burning quota.

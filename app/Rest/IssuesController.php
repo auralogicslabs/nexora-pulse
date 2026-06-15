@@ -337,7 +337,8 @@ class IssuesController extends BaseController
         $placeholder = implode(',', array_fill(0, count($ids), '%d'));
         $values      = array_merge([$status], $ids, [$this->get_site_id()]);
 
-        // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+        // $values = [status, ...ids, site_id] matches %s + dynamic %d list + %d.
+        // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber
         $wpdb->query($wpdb->prepare("UPDATE {$table} SET status = %s WHERE id IN ({$placeholder}) AND site_id = %d", ...$values));
 
         return $this->success(['updated' => count($ids)]);

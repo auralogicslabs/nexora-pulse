@@ -117,12 +117,13 @@ final class ImageAuditor
     private function find_oversize_images(int $limit): array
     {
         global $wpdb;
+        $image_like = $wpdb->esc_like('image/') . '%';
         $ids = (array) $wpdb->get_col($wpdb->prepare("
             SELECT p.ID FROM {$wpdb->posts} p
-            WHERE p.post_type = 'attachment' AND p.post_mime_type LIKE 'image/%'
+            WHERE p.post_type = 'attachment' AND p.post_mime_type LIKE %s
             ORDER BY p.post_date DESC
             LIMIT %d
-        ", $limit * 4)); // over-sample, then filter
+        ", $image_like, $limit * 4)); // over-sample, then filter
 
         $items = [];
         foreach ($ids as $id) {
@@ -149,6 +150,7 @@ final class ImageAuditor
     private function find_attachments_missing_alt(int $limit): array
     {
         global $wpdb;
+        $image_like = $wpdb->esc_like('image/') . '%';
         $rows = (array) $wpdb->get_results($wpdb->prepare("
             SELECT p.ID, p.post_title, p.post_date
             FROM {$wpdb->posts} p
@@ -156,11 +158,11 @@ final class ImageAuditor
                 ON pm.post_id = p.ID
                AND pm.meta_key = '_wp_attachment_image_alt'
             WHERE p.post_type = 'attachment'
-              AND p.post_mime_type LIKE 'image/%'
+              AND p.post_mime_type LIKE %s
               AND (pm.meta_value IS NULL OR pm.meta_value = '')
             ORDER BY p.post_date DESC
             LIMIT %d
-        ", $limit));
+        ", $image_like, $limit));
 
         $items = [];
         foreach ($rows as $r) {
