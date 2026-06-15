@@ -62,11 +62,8 @@ final class AdminPage
                 <strong><?php echo esc_html__('Nexora Pulse', 'nexora-pulse'); ?>:</strong>
                 <?php
                 /* translators: %s: detected SEO plugin name */
-                $notice_text = sprintf(
-                    __('%s is active, so Pulse is running in analysis mode — it will not output its own meta tags and cannot create duplicates.', 'nexora-pulse'),
-                    $name
-                );
-                echo esc_html($notice_text);
+                $notice_template = __('%s is active, so Pulse is running in analysis mode — it will not output its own meta tags and cannot create duplicates.', 'nexora-pulse');
+                echo esc_html(sprintf($notice_template, $name));
                 ?>
                 <a href="<?php echo esc_url($url); ?>"><?php echo esc_html__('View compatibility details', 'nexora-pulse'); ?></a>
             </p>

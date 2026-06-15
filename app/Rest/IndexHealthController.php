@@ -193,6 +193,9 @@ class IndexHealthController extends BaseController
         $status_table = $wpdb->prefix . 'nexora_pulse_index_status';
 
         // First: posts never inspected (left-join against status table).
+        // $status_table is built from $wpdb->prefix (not user input) and the
+        // query is prepared; the interpolated table name is safe.
+        // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
         $ids = $wpdb->get_col($wpdb->prepare(
             "SELECT p.ID
              FROM {$wpdb->posts} p
