@@ -85,13 +85,15 @@ Yes. Pulse analyzes the rendered content of any builder or block editor.
 
 == Screenshots ==
 
-1. Website SEO Health Overview — the Nexora Pulse dashboard at a glance.
-2. Actionable SEO Analysis — every page scored, with clear issues and recommendations.
-3. Visual Internal Linking Intelligence — the Neural Link graph with orphan-page detection.
-4. Google Search Console Insights — real indexing verdicts, clicks, impressions, and the Index Doctor.
-5. Duplicate Content Detection — the Originality engine surfaces duplicate and near-duplicate pages.
-6. Prioritized SEO Recommendations — the SEO opportunity and issue center.
-7. Migration & Compatibility Center — detected SEO plugins and duplicate-tag safety.
+1. Website SEO Health Overview — the Nexora Pulse dashboard, with the Oxygen Score, issues by severity, and your connected Google data sources at a glance.
+2. Actionable SEO Analysis — the SEO Analyzer scores every page and lists clear, fixable issues with explanations.
+3. Index Doctor — real Google Search Console indexing verdicts (indexed, crawled-not-indexed, excluded) with systemic patterns detected across pages.
+4. Visual Internal Linking Intelligence — the Neural Link graph maps your internal links and surfaces orphan pages and broken links.
+5. Google Intelligence & SEO Opportunities — connected Google data sources alongside prioritized, actionable optimization opportunities.
+6. Migration & Compatibility Center — detects other SEO plugins and confirms Pulse runs safely with no duplicate meta tags.
+7. Integrations — connect Google Search Console and PageSpeed Insights with your own Google account, no data routed through us.
+8. Settings — global title and meta description templates, plus general, robots.txt, and data controls.
+9. Help & Documentation — built-in, step-by-step setup guides for every integration.
 
 == Changelog ==
 
