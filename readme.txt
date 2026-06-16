@@ -56,9 +56,37 @@ Roadmap items appear in the app marked "Coming Soon" and are not yet active.
 
 = Privacy =
 * Search Console and PageSpeed connect with your own Google credentials/API key, stored encrypted in your own database.
-* No data is sent to our servers, and no external request is made without your explicit action.
+* No data is sent to our (Auralogics Labs) servers, and no external request is made without your explicit action or configuration.
 * No obfuscated code — full GPL source is available at https://github.com/auralogicslabs/nexora-pulse. The React admin UI is compiled from the `frontend/` directory with `npm run build`; see BUILD.md in the repository for exact steps to reproduce `assets/dist/` from source.
 * A proper uninstall.php cleans up all plugin data on deletion.
+
+== External services ==
+
+Nexora Pulse can connect to the following third-party services. Each is optional, is activated only when you configure it, and uses **your own** Google account, API key, or tracking ID — nothing is routed through Auralogics Labs servers. No external service is contacted until you explicitly set it up.
+
+**Google Search Console API**
+Used to retrieve your site's search performance data (clicks, impressions, CTR, average position) and indexing status so Pulse can show them in the dashboard. When you connect Search Console and when a sync runs (manually or on its schedule), the plugin sends your site URL and the OAuth access token associated with your own Google account to the API, and receives the metrics back. It is only called after you connect your own Google Search Console property.
+Endpoint: https://www.googleapis.com/webmasters/v3
+Terms of Service: https://developers.google.com/terms
+Privacy Policy: https://policies.google.com/privacy
+
+**Google Search Console URL Inspection API**
+Used by the Index Doctor to ask Google for the live indexing verdict of a specific page (indexed, crawled-not-indexed, excluded, etc.). When you inspect a page or run a bulk index scan, the plugin sends that page's URL plus your own Google OAuth access token to the API and receives the inspection result. Called only on your action, for your own connected property.
+Endpoint: https://searchconsole.googleapis.com/v1/urlInspection/index:inspect
+Terms of Service: https://developers.google.com/terms
+Privacy Policy: https://policies.google.com/privacy
+
+**Google PageSpeed Insights API**
+Used to pull real-user Core Web Vitals (LCP, INP, CLS, TTFB) and lab performance data for your pages. When you request a performance check, the plugin sends the page URL and your own PageSpeed Insights API key to the API and receives the performance report. Only called after you add your own free API key and request a check.
+Endpoint: https://www.googleapis.com/pagespeedonline/v5/runPagespeed
+Terms of Service: https://developers.google.com/terms
+Privacy Policy: https://policies.google.com/privacy
+
+**Google Tag Manager / Google Analytics (gtag.js)**
+Optional. If — and only if — you enter a Google Tag Manager container ID or a Google Analytics 4 measurement ID in the plugin settings, Pulse adds the standard Google loader script to your site's public pages so your visitors' analytics are sent to your own Google property. Pulse does not add any tracking of its own and sends nothing unless you configure one of these IDs. Standard visitor analytics data is collected by Google under your account.
+Loaded from: https://www.googletagmanager.com/
+Terms of Service: https://marketingplatform.google.com/about/analytics/terms/us/
+Privacy Policy: https://policies.google.com/privacy
 
 == Installation ==
 

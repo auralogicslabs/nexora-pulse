@@ -21,10 +21,10 @@ final class AdminPage
     {
         add_action('admin_menu', [$this, 'register_menu']);
         add_action('admin_enqueue_scripts', [$this, 'enqueue_assets']);
+        add_action('admin_enqueue_scripts', [$this, 'enqueue_chrome']);
         add_action('network_admin_menu', [$this, 'register_network_menu']);
         add_action('admin_notices', [$this, 'maybe_show_seo_notice']);
         add_action('wp_ajax_nexora_pulse_dismiss_seo_notice', [$this, 'dismiss_seo_notice']);
-        add_action('admin_head', [$this, 'menu_icon_css']);
     }
 
     /**
@@ -68,19 +68,9 @@ final class AdminPage
                 <a href="<?php echo esc_url($url); ?>"><?php echo esc_html__('View compatibility details', 'nexora-pulse'); ?></a>
             </p>
         </div>
-        <script>
-        (function(){
-            document.addEventListener('click', function(e){
-                var n = e.target.closest('[data-nexora-seo-notice] .notice-dismiss');
-                if (!n) return;
-                var data = new FormData();
-                data.append('action', 'nexora_pulse_dismiss_seo_notice');
-                data.append('nonce', '<?php echo esc_js(wp_create_nonce('nexora_pulse_seo_notice')); ?>');
-                fetch(ajaxurl, { method: 'POST', body: data, credentials: 'same-origin' });
-            });
-        })();
-        </script>
         <?php
+        // The dismiss handler is enqueued via enqueue_chrome() (wp_add_inline_script),
+        // not echoed here, so all JS goes through WordPress's script API.
     }
 
     public function dismiss_seo_notice(): void
@@ -211,20 +201,37 @@ final class AdminPage
     }
 
     /**
-     * Size the Nexora Pulse admin-menu icon to 20x20 via CSS background-image.
-     * Hooked on admin_head so it applies on every admin screen.
+     * Enqueue admin "chrome" that applies on every admin screen, through the
+     * WordPress style/script API rather than echoing <style>/<script> tags:
+     *
+     *   1. The 20x20 admin-menu icon CSS (background-image), and
+     *   2. The dismiss handler for the "another SEO plugin detected" notice.
+     *
+     * Both are attached to a lightweight registered handle so WordPress owns
+     * the output (admin_enqueue_scripts runs on all admin pages).
      */
-    public function menu_icon_css(): void
+    public function enqueue_chrome(): void
     {
+        // ── Menu icon CSS ─────────────────────────────────────────────────
         $icon = esc_url(NEXORA_PULSE_URL . 'assets/img/nexora-icon.png');
-        $style = '<style id="nexora-pulse-menu-icon">'
-           . '#adminmenu #toplevel_page_nexora-pulse .wp-menu-image{'
-           . 'background:url("' . $icon . '") center center no-repeat !important;'
-           . 'background-size:20px 20px !important;}'
-           . '#adminmenu #toplevel_page_nexora-pulse .wp-menu-image img,'
-           . '#adminmenu #toplevel_page_nexora-pulse .wp-menu-image:before{display:none !important;}'
-           . '</style>';
-        // $icon is escaped with esc_url(); the rest is a static CSS literal.
-        echo wp_kses($style, ['style' => ['id' => true]]);
+        $css  = '#adminmenu #toplevel_page_nexora-pulse .wp-menu-image{'
+              . 'background:url("' . $icon . '") center center no-repeat !important;'
+              . 'background-size:20px 20px !important;}'
+              . '#adminmenu #toplevel_page_nexora-pulse .wp-menu-image img,'
+              . '#adminmenu #toplevel_page_nexora-pulse .wp-menu-image:before{display:none !important;}';
+        wp_register_style('nexora-pulse-chrome', false, [], NEXORA_PULSE_VERSION);
+        wp_enqueue_style('nexora-pulse-chrome');
+        wp_add_inline_style('nexora-pulse-chrome', $css);
+
+        // ── SEO-notice dismiss handler ────────────────────────────────────
+        wp_register_script('nexora-pulse-chrome', false, [], NEXORA_PULSE_VERSION, true);
+        wp_enqueue_script('nexora-pulse-chrome');
+        $nonce = wp_create_nonce('nexora_pulse_seo_notice');
+        $js = '(function(){document.addEventListener("click",function(e){'
+            . 'var n=e.target.closest("[data-nexora-seo-notice] .notice-dismiss");if(!n)return;'
+            . 'var data=new FormData();data.append("action","nexora_pulse_dismiss_seo_notice");'
+            . 'data.append("nonce",' . wp_json_encode($nonce) . ');'
+            . 'fetch(ajaxurl,{method:"POST",body:data,credentials:"same-origin"});});})();';
+        wp_add_inline_script('nexora-pulse-chrome', $js);
     }
 }

@@ -18,7 +18,6 @@ final class Router
             new LinksController(),
             new OriginalityController(),
             new GscController(),
-            new AiController(),
             new SettingsController(),
             new RedirectsController(),
             new ActionsController(),

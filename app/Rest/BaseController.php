@@ -44,9 +44,20 @@ abstract class BaseController extends WP_REST_Controller
         return $this->check_admin();
     }
 
+    /**
+     * Capability gate for every REST route.
+     *
+     * Nexora Pulse stores its settings, encrypted API credentials (GSC, etc.),
+     * and connection state network-wide via get_site_option()/update_site_option()
+     * (see SettingsService / GscSync). On multisite that data is shared across the
+     * whole network, so a single-site admin holding only 'manage_options' must NOT
+     * be able to read or modify it — that requires a network-level capability.
+     * On a single site, 'manage_options' is the correct check.
+     */
     private function check_admin(): bool|WP_Error
     {
-        if (!current_user_can('manage_options')) {
+        $cap = is_multisite() ? 'manage_network_options' : 'manage_options';
+        if (!current_user_can($cap)) {
             return new WP_Error('forbidden', __('Insufficient permissions.', 'nexora-pulse'), ['status' => 403]);
         }
         return true;

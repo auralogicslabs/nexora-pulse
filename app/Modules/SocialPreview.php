@@ -28,8 +28,11 @@ final class SocialPreview
         add_action('wp_head', [self::class, 'output_supplemental'], 3);
         // Priority 5: full social block only when Engine is absent.
         add_action('wp_head', [self::class, 'output_social'], 5);
-        // Verification + analytics tags — early in head, before content.
+        // Verification meta tags — early in head, before content.
         add_action('wp_head', [self::class, 'output_verification'], 2);
+        // Analytics (GA4 / GTM) — enqueued via wp_enqueue_scripts so the tags
+        // are registered through WordPress instead of echoed inline in wp_head.
+        add_action('wp_enqueue_scripts', [self::class, 'enqueue_analytics']);
     }
 
     /**
@@ -104,12 +107,31 @@ final class SocialPreview
 
         $output = implode("\n", array_filter($tags));
         if (!empty($output)) {
-            echo "\n<!-- Nexora Pulse Verification -->\n" . $output . "\n<!-- /Nexora Pulse Verification -->\n"; // phpcs:ignore
+            // Verification <meta> tags are not scripts/styles; echoing them in
+            // wp_head is the standard pattern (see WP core's own verification).
+            echo "\n<!-- Nexora Pulse Verification -->\n" . $output . "\n<!-- /Nexora Pulse Verification -->\n"; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+        }
+    }
+
+    /**
+     * Enqueue GA4 / GTM analytics via WordPress instead of echoing inline
+     * <script> tags in wp_head. Registered on wp_enqueue_scripts.
+     *
+     * Skips entirely when GA4/GTM is already present on the page from any other
+     * source (theme, Site Kit, manual snippet, etc.) so we never double-track.
+     */
+    public static function enqueue_analytics(): void
+    {
+        if (is_admin()) {
+            return;
         }
 
-        // ── Analytics (GA4 / GTM) ─────────────────────────────────
-        // Skip if GA4 or GTM is already present anywhere in the page source,
-        // regardless of which plugin, theme, or manual snippet added it.
+        // During Pulse's own head-scan request, emit nothing (see output_verification).
+        if (!empty($_SERVER['HTTP_X_NEXORA_HEAD_SCAN'])) {
+            return;
+        }
+
+        $detected = self::get_detected_head_scripts();
         if ($detected['has_ga4'] || $detected['has_gtm']) {
             return;
         }
@@ -118,16 +140,26 @@ final class SocialPreview
         $ga4_id = (string) get_option('nexora_pulse_ga4_id', '');
 
         if (!empty($gtm_id)) {
-            $id = esc_js($gtm_id);
-            echo "\n<!-- Nexora Pulse Analytics (GTM) -->\n"; // phpcs:ignore
-            echo "<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','{$id}');</script>\n"; // phpcs:ignore
-            echo "<!-- /Nexora Pulse Analytics -->\n"; // phpcs:ignore
+            // GTM is a self-contained inline loader. Register an empty handle in
+            // the head and attach the loader as inline JS so WordPress owns it.
+            wp_register_script('nexora-pulse-gtm', '', [], NEXORA_PULSE_VERSION, false);
+            wp_enqueue_script('nexora-pulse-gtm');
+            $id  = wp_json_encode($gtm_id);
+            $gtm = "(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});"
+                 . "var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';"
+                 . "j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;"
+                 . "f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer',{$id});";
+            wp_add_inline_script('nexora-pulse-gtm', $gtm);
         } elseif (!empty($ga4_id)) {
-            $id = esc_js($ga4_id);
-            echo "\n<!-- Nexora Pulse Analytics (GA4) -->\n"; // phpcs:ignore
-            echo "<script async src=\"https://www.googletagmanager.com/gtag/js?id={$id}\"></script>\n"; // phpcs:ignore
-            echo "<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','{$id}');</script>\n"; // phpcs:ignore
-            echo "<!-- /Nexora Pulse Analytics -->\n"; // phpcs:ignore
+            // GA4: enqueue the external gtag loader, then attach the config as
+            // inline JS that runs before it via the 'before' position.
+            $src = 'https://www.googletagmanager.com/gtag/js?id=' . rawurlencode($ga4_id);
+            wp_enqueue_script('nexora-pulse-ga4', $src, [], null, false);
+            wp_script_add_data('nexora-pulse-ga4', 'async', true);
+            $id      = wp_json_encode($ga4_id);
+            $bootstr = 'window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}'
+                     . "gtag('js',new Date());gtag('config',{$id});";
+            wp_add_inline_script('nexora-pulse-ga4', $bootstr, 'before');
         }
     }
 

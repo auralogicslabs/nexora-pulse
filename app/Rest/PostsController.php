@@ -124,10 +124,6 @@ class PostsController extends BaseController
             return $this->error(__('Image exceeds the 5 MB size limit.', 'nexora-pulse'), 422);
         }
 
-        require_once ABSPATH . 'wp-admin/includes/file.php';
-        require_once ABSPATH . 'wp-admin/includes/media.php';
-        require_once ABSPATH . 'wp-admin/includes/image.php';
-
         $upload_dir = wp_upload_dir();
         if (!empty($upload_dir['error'])) {
             return $this->error((string) $upload_dir['error'], 500);
@@ -155,6 +151,10 @@ class PostsController extends BaseController
             return $this->error(__('Could not create media attachment.', 'nexora-pulse'), 500);
         }
 
+        // wp_generate_attachment_metadata() lives in wp-admin/includes/image.php,
+        // which is not loaded during REST requests. Load it here and use it
+        // immediately — the only valid reason to include a core admin file.
+        require_once ABSPATH . 'wp-admin/includes/image.php';
         $meta = wp_generate_attachment_metadata($att_id, $filepath);
         wp_update_attachment_metadata($att_id, $meta);
         /* translators: %s: post title the Open Graph image was generated for. */

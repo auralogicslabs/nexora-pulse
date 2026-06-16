@@ -12,36 +12,55 @@ class GscController extends BaseController
 {
     protected $rest_base = 'gsc'; // phpcs:ignore
 
+    /**
+     * GSC credentials and connection state are stored network-wide via
+     * get_site_option()/update_site_option() (see GscSync). On multisite that
+     * means a single-site admin with only 'manage_options' must NOT be able to
+     * read or change them — that requires a network-level capability. On a
+     * single site, 'manage_options' is the correct check.
+     *
+     * Used as the permission_callback for every GSC route except the OAuth
+     * redirect-return callback (which is validated by its signed state param).
+     */
+    public function gsc_permissions_check($request) // phpcs:ignore
+    {
+        $cap = is_multisite() ? 'manage_network_options' : 'manage_options';
+        if (!current_user_can($cap)) {
+            return new \WP_Error('forbidden', __('Insufficient permissions.', 'nexora-pulse'), ['status' => 403]);
+        }
+        return true;
+    }
+
     public function register_routes(): void
     {
         register_rest_route($this->namespace, '/gsc/status', [
             'methods'             => 'GET',
             'callback'            => [$this, 'get_status'],
-            'permission_callback' => [$this, 'get_items_permissions_check'],
+            'permission_callback' => [$this, 'gsc_permissions_check'],
         ]);
 
         register_rest_route($this->namespace, '/gsc/connect', [
             'methods'             => 'POST',
             'callback'            => [$this, 'connect'],
-            'permission_callback' => [$this, 'create_item_permissions_check'],
+            'permission_callback' => [$this, 'gsc_permissions_check'],
         ]);
 
         register_rest_route($this->namespace, '/gsc/disconnect', [
             'methods'             => 'POST',
             'callback'            => [$this, 'disconnect'],
-            'permission_callback' => [$this, 'create_item_permissions_check'],
+            'permission_callback' => [$this, 'gsc_permissions_check'],
         ]);
 
         register_rest_route($this->namespace, '/gsc/sync', [
             'methods'             => 'POST',
             'callback'            => [$this, 'trigger_sync'],
-            'permission_callback' => [$this, 'create_item_permissions_check'],
+            'permission_callback' => [$this, 'gsc_permissions_check'],
         ]);
 
         register_rest_route($this->namespace, '/gsc/performance', [
             'methods'             => 'GET',
             'callback'            => [$this, 'get_performance'],
-            'permission_callback' => [$this, 'get_items_permissions_check'],
+            'permission_callback' => [$this, 'gsc_permissions_check'],
             'args'                => [
                 'days'     => ['type' => 'integer', 'default' => 28, 'minimum' => 7, 'maximum' => 90],
                 'page'     => ['type' => 'integer', 'default' => 1],
@@ -58,13 +77,13 @@ class GscController extends BaseController
         register_rest_route($this->namespace, '/gsc/verify', [
             'methods'             => 'POST',
             'callback'            => [$this, 'verify_connection'],
-            'permission_callback' => [$this, 'create_item_permissions_check'],
+            'permission_callback' => [$this, 'gsc_permissions_check'],
         ]);
 
         register_rest_route($this->namespace, '/gsc/redirect-uri', [
             'methods'             => 'GET',
             'callback'            => [$this, 'get_redirect_uri'],
-            'permission_callback' => [$this, 'get_items_permissions_check'],
+            'permission_callback' => [$this, 'gsc_permissions_check'],
         ]);
     }
 
