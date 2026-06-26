@@ -152,7 +152,7 @@ function SocialTab() {
   const previewTitle = current.og_title || current.default_title || 'Page title';
   const previewDesc  = current.og_description || current.default_desc || 'Page description will appear here...';
   const previewImage = current.og_image || current.default_image || '';
-  const previewUrl   = current.permalink ? new URL(current.permalink).hostname : 'yourdomain.com';
+  const previewUrl   = current.permalink ? new URL(current.permalink).hostname : window.location.hostname;
 
   return (
     <div className="space-y-4">
@@ -246,7 +246,7 @@ function SocialTab() {
                   </div>
                   <input
                     className="np-input font-mono text-xs"
-                    placeholder={current.default_image || 'https://yourdomain.com/image.jpg'}
+                    placeholder={current.default_image || 'Paste an image URL or generate one'}
                     value={current.og_image ?? ''}
                     onChange={(e) => setForm({ ...current, og_image: e.target.value })}
                   />
@@ -593,7 +593,7 @@ function OgImageGeneratorModal({
                   className="np-input text-sm font-mono"
                   value={brand}
                   onChange={(e) => setBrand(e.target.value)}
-                  placeholder="yourdomain.com"
+                  placeholder="example.com"
                 />
               </div>
             </div>
