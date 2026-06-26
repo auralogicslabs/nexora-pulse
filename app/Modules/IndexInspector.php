@@ -187,18 +187,16 @@ final class IndexInspector
         $crawled_not    = 0;
         $discovered_not = 0;
         $excluded       = 0;
+        $other          = 0;
         $high_risk      = 0;
 
         foreach ($rows as $r) {
-            $state = (string) ($r['coverage_state'] ?? '');
-            if (stripos($state, 'submitted and indexed') !== false || stripos($state, 'indexed, not submitted') !== false) {
-                $indexed++;
-            } elseif (stripos($state, 'crawled') !== false) {
-                $crawled_not++;
-            } elseif (stripos($state, 'discovered') !== false) {
-                $discovered_not++;
-            } elseif (stripos($state, 'excluded') !== false || stripos($state, 'noindex') !== false) {
-                $excluded++;
+            switch ($this->classify_coverage((string) ($r['coverage_state'] ?? ''))) {
+                case 'indexed':        $indexed++;        break;
+                case 'crawled':        $crawled_not++;    break;
+                case 'discovered':     $discovered_not++; break;
+                case 'excluded':       $excluded++;       break;
+                default:               $other++;          break;
             }
 
             if ((int) ($r['risk_score'] ?? 0) >= 70) {
@@ -212,10 +210,64 @@ final class IndexInspector
             'crawled_not_indexed'    => $crawled_not,
             'discovered_not_indexed' => $discovered_not,
             'excluded'               => $excluded,
+            'other'                  => $other,
             'high_risk'              => $high_risk,
             'quota_used_today'       => $this->get_quota_used($site_id),
             'quota_total'            => self::DAILY_QUOTA,
         ];
+    }
+
+    /**
+     * Classify a Google coverageState string into one of five buckets:
+     * 'indexed' | 'crawled' | 'discovered' | 'excluded' | 'other'.
+     *
+     * This is the single source of truth used by summary() and is_indexed_state()
+     * so the dashboard cards always add up to the total — every inspected URL
+     * lands in exactly one bucket and none are silently dropped.
+     *
+     * Note on "URL is unknown to Google": the live URL Inspection API returns this
+     * for URLs that GSC's (lagged) Coverage report labels "Discovered – currently
+     * not indexed". We map it to 'discovered' so Pulse's cards match the wording
+     * users see in Search Console.
+     */
+    private function classify_coverage(string $state): string
+    {
+        $s = strtolower(trim($state));
+
+        if ($s === '' || $s === 'unknown') {
+            return 'other';
+        }
+
+        // Indexed.
+        if (str_contains($s, 'submitted and indexed') || str_contains($s, 'indexed, not submitted')) {
+            return 'indexed';
+        }
+
+        // Crawled, not indexed.
+        if (str_contains($s, 'crawled')) {
+            return 'crawled';
+        }
+
+        // Discovered, not indexed — including the Inspection API's "unknown to Google".
+        if (str_contains($s, 'discovered') || str_contains($s, 'unknown to google')) {
+            return 'discovered';
+        }
+
+        // Explicitly excluded from indexing.
+        if (str_contains($s, 'excluded')
+            || str_contains($s, 'noindex')
+            || str_contains($s, 'blocked by robots')
+            || str_contains($s, 'page with redirect')
+            || str_contains($s, 'alternate page')
+            || str_contains($s, 'duplicate')
+            || str_contains($s, 'soft 404')
+            || str_contains($s, 'not found')
+        ) {
+            return 'excluded';
+        }
+
+        // Anything else (new/unseen Google states) — counted, never dropped.
+        return 'other';
     }
 
     /**
@@ -629,8 +681,7 @@ final class IndexInspector
 
     private function is_indexed_state(string $state): bool
     {
-        $lower = strtolower($state);
-        return str_contains($lower, 'submitted and indexed') || str_contains($lower, 'indexed, not submitted');
+        return $this->classify_coverage($state) === 'indexed';
     }
 
     private function risk_band(int $score): string
