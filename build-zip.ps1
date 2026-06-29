@@ -17,7 +17,11 @@ $src      = $PSScriptRoot
 $root     = Split-Path (Split-Path $src -Parent) -Parent
 $relProd  = Join-Path (Join-Path $root 'release') 'nexora-pulse'
 $stage    = Join-Path $relProd 'nexora-pulse'
-$zipName  = 'nexora-pulse-1.0.0.zip'
+
+# Read version from the plugin header so the zip name always matches.
+$verLine  = Select-String -Path (Join-Path $src 'nexora-pulse.php') -Pattern '^\s*\*\s*Version:\s*([\d.]+)' | Select-Object -First 1
+$version  = if ($verLine) { $verLine.Matches[0].Groups[1].Value } else { '0.0.0' }
+$zipName  = "nexora-pulse-$version.zip"
 $zipPath  = Join-Path $relProd $zipName
 
 # Fresh stage.

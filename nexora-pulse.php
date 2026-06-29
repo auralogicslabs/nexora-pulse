@@ -1,9 +1,9 @@
 <?php
 /**
- * Plugin Name:       Nexora Pulse – SEO Operations Platform
+ * Plugin Name:       Nexora Pulse – Complete SEO Plugin
  * Plugin URI:        https://auralogicslabs.com/products/nexora-pulse
  * Description:       Modern SEO toolkit with Search Console insights, indexing intelligence, schema, internal linking, duplicate content detection, and SEO opportunity analysis.
- * Version:           1.0.0
+ * Version:           1.0.1
  * Author:            Auralogics Labs
  * Author URI:        https://auralogicslabs.com
  * License:           GPL v2 or later
@@ -20,7 +20,7 @@ declare(strict_types=1);
 
 defined('ABSPATH') || exit;
 
-define('NEXORA_PULSE_VERSION',   '1.0.0');
+define('NEXORA_PULSE_VERSION',   '1.0.1');
 define('NEXORA_PULSE_FILE',      __FILE__);
 define('NEXORA_PULSE_DIR',       plugin_dir_path(__FILE__));
 define('NEXORA_PULSE_URL',       plugin_dir_url(__FILE__));
