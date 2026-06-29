@@ -1,6 +1,6 @@
 === Nexora Pulse – SEO Operations Platform ===
 Contributors: auralogics
-Tags: seo, search console, indexing, internal linking, schema
+Tags: seo, xml sitemap, schema, google search console, core web vitals
 Requires at least: 6.0
 Tested up to: 7.0
 Stable tag: 1.0.0
@@ -8,42 +8,111 @@ Requires PHP: 8.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-WordPress SEO plugin with Search Console, technical SEO analysis, internal linking, schema validation, indexing insights, and site auditing.
+WordPress SEO plugin: Google Search Console, on-page & technical SEO audits, XML sitemap, schema, internal linking, and Core Web Vitals.
 
 == Description ==
 
-Nexora Pulse is an SEO plugin for WordPress that helps you understand your search visibility, fix indexing problems, run technical SEO audits, strengthen internal linking, and find real optimization opportunities. It connects to your own Google Search Console, so the insights are based on your actual search data, not guesses.
+Nexora Pulse is a complete SEO plugin for WordPress that helps you improve Google rankings, fix indexing issues, optimize on-page SEO, audit technical SEO, manage your XML sitemap and robots.txt, output schema markup, monitor Core Web Vitals, strengthen internal linking, and analyze Google Search Console data — all from one dashboard.
 
-Most SEO plugins stop at settings and a green light. Pulse focuses on what to do next. One dashboard analyzes every page, surfaces the issues that matter, and tracks whether your content is actually getting indexed and ranked.
+**What makes Nexora Pulse different.** Most SEO plugins stop at settings and a green light, scoring your pages against static rules. Pulse connects to your own Google Search Console and PageSpeed data and tells you what to fix next based on how your site is *actually* performing in search — real indexing status, real clicks and impressions, real Core Web Vitals from Chrome users. It is a data-driven SEO assistant, not just a checklist.
 
-You get your full technical SEO workflow in one place. Audit every page, manage your XML sitemap and robots.txt, output clean schema and metadata, map your internal links, and catch duplicate content before it costs you rankings.
+Whether you run a personal blog, a business website, a content publication, an agency client site, or a larger enterprise site, Pulse gives you actionable SEO recommendations grounded in your own search data.
 
-**SEO Analyzer**
-Scans every post and page for on-page SEO issues: titles, meta descriptions, headings, readability, and keyword usage. Each page gets a score so you know where to focus first.
+## On-Page SEO Analyzer
 
-**Neural Links**
-Maps the internal link graph of your whole site. Spot orphan pages, weak link clusters, and internal-linking opportunities at a glance.
+Scans every post and page for on-page SEO issues: meta titles, meta descriptions, headings, content readability, and keyword usage. Each page gets an SEO score so you know exactly where to focus first.
 
-**Originality / Duplicate Detection**
+## Google Search Console Integration
+
+Connect your own Google Search Console account to monitor your real search performance inside WordPress:
+
+* Clicks, impressions, CTR, and average position
+* Top search queries
+* Indexed and crawled pages
+* Index coverage and indexing status
+* URL Inspection for any single page
+
+It is your Search Console data, surfaced where you actually work.
+
+## Google Index Coverage & Index Health (Index Doctor)
+
+See which pages are search-ready and which ones need attention. The Index Doctor uses the Search Console URL Inspection API to tell you *why* specific pages are not getting indexed (crawled — currently not indexed, excluded, discovered — not indexed, and more) and detects systemic patterns across your site.
+
+## Technical SEO Audit
+
+Run a full technical SEO audit of your site — crawlability, indexability, metadata coverage, canonical setup, and structural issues — and get a prioritized list of what to fix.
+
+## XML Sitemap Manager
+
+Generate and manage a clean XML sitemap so search engines can discover and crawl every important page on your WordPress site.
+
+## Robots.txt Editor
+
+Edit and manage your robots.txt directly from the dashboard to control how search engines crawl your site.
+
+## Schema Markup (Structured Data / JSON-LD)
+
+Automatically generates Schema.org structured data (JSON-LD) — Article/BlogPosting and BreadcrumbList — to help search engines understand your content and improve eligibility for rich results.
+
+## Meta Titles, Descriptions & Social Tags
+
+Set global title and meta description templates, and output clean canonical URLs, Open Graph tags, and Twitter Card tags so your pages look right in search results and on social media.
+
+## Internal Link Analyzer (Neural Links)
+
+Maps the internal link graph of your whole site. Spot orphan pages, weak link clusters, and internal-linking opportunities at a glance to spread ranking strength across your content.
+
+## Duplicate Content Checker (Originality)
+
 Finds duplicate and near-duplicate content across your site before it hurts your rankings.
 
-**Image SEO**
-Audits image alt text, file sizes, and file names so your media helps your SEO instead of slowing it down.
+## Core Web Vitals & PageSpeed
 
-**Redirect Manager**
-Create and manage 301 and 302 redirects from a clean interface.
+Add a free PageSpeed Insights API key to pull real-user Core Web Vitals — LCP, INP, CLS, and TTFB — straight from Chrome field data, alongside lab performance scores.
 
-**Google Search Console**
-Connect your own Search Console property to see real indexing status, clicks, impressions, CTR, and average position. This also powers the Index Doctor, which tells you why specific pages are not getting indexed.
+## Redirect Manager
 
-**Core Web Vitals & Performance**
-Add a free PageSpeed Insights API key to pull real-user LCP, INP, CLS, and TTFB straight from Chrome field data.
+Create and manage 301 and 302 redirects from a clean interface to preserve link equity and fix broken URLs.
 
-**Index Health**
-See which pages are search-ready and which ones need attention.
+## Image SEO
 
-**Migration & Compatibility Center**
-Already running another SEO plugin? Pulse detects Yoast, Rank Math, All in One SEO, SEOPress, and more. It runs in a safe analysis-only mode so it never creates duplicate meta tags, and it shows you exactly what it found and how much of your existing SEO data is ready to migrate.
+Audits image alt text, file sizes, and file names so your media helps your SEO instead of slowing your pages down.
+
+## SEO Plugin Migration & Compatibility Center
+
+Already running another SEO plugin? Pulse detects Yoast SEO, Rank Math, All in One SEO, SEOPress, and more. It runs in a safe analysis-only mode so it never creates duplicate meta tags, and it shows you exactly what it found and how much of your existing SEO data is ready to migrate.
+
+= Who is Nexora Pulse for? =
+
+* Bloggers and content publishers
+* Small businesses and local websites
+* Marketing agencies and freelancers
+* SEO professionals and consultants
+* WordPress developers
+* Enterprise and high-traffic websites
+
+= All features =
+
+* On-page SEO audit
+* Technical SEO audit
+* Website SEO health score
+* Google Search Console integration
+* Search analytics (clicks, impressions, CTR, position)
+* URL Inspection
+* Index coverage & index monitoring
+* XML sitemap
+* Robots.txt editor
+* Schema markup / structured data (JSON-LD)
+* Meta titles and meta descriptions
+* Canonical URLs
+* Open Graph and Twitter Cards
+* Breadcrumbs (schema)
+* Internal link analysis
+* Duplicate content checker
+* Core Web Vitals & PageSpeed integration
+* Redirect manager (301 / 302)
+* Image SEO (alt text, filenames, sizes)
+* SEO plugin migration & compatibility
 
 = Free =
 Nexora Pulse is fully free. Every tool above is included, even Google Search Console and Core Web Vitals. Those use your own Google account or API key, so there is no cost to you and nothing is routed through our servers.
@@ -95,6 +164,33 @@ Privacy Policy: https://policies.google.com/privacy
 3. Open Nexora Pulse from the admin menu and run your first SEO scan.
 
 == Frequently Asked Questions ==
+
+= How do I improve my WordPress SEO with Nexora Pulse? =
+Install Pulse, run your first SEO scan, and connect your Google Search Console account. Pulse audits every page for on-page and technical SEO issues, scores them, and gives you a prioritized list of fixes based on your own search data — so you work on what actually moves rankings instead of guessing.
+
+= How do I connect Google Search Console to WordPress? =
+Open Nexora Pulse, go to Integrations, and follow the one-time guided setup to connect your own Google Search Console property. Once connected, Pulse shows your clicks, impressions, CTR, average position, indexed pages, and URL Inspection results inside WordPress. Your credentials stay in your own site, encrypted, and nothing is routed through our servers.
+
+= Does Nexora Pulse replace Yoast SEO or Rank Math? =
+It can, or it can run alongside them. Pulse outputs its own meta titles, descriptions, canonical, Open Graph, Twitter, and schema tags when it is your primary SEO plugin. If it detects Yoast, Rank Math, All in One SEO, or SEOPress, it automatically switches to analysis-only mode so you never get duplicate meta tags.
+
+= Can I migrate SEO metadata from another SEO plugin? =
+Yes. The built-in Migration & Compatibility Center detects your existing SEO plugin and shows exactly how much of your meta titles, descriptions, and settings are ready to migrate, with no duplicate-tag risk.
+
+= Does Nexora Pulse generate an XML sitemap? =
+Yes. Pulse generates and manages a clean XML sitemap so search engines can discover and crawl your important pages, and it includes a robots.txt editor.
+
+= Does it include schema markup / structured data? =
+Yes. Pulse outputs Schema.org structured data as JSON-LD (Article/BlogPosting and BreadcrumbList) to help search engines understand your content and improve eligibility for rich results.
+
+= Can I monitor Core Web Vitals? =
+Yes. Add your own free PageSpeed Insights API key and Pulse pulls real-user Core Web Vitals — LCP, INP, CLS, and TTFB — straight from Chrome field data, plus lab performance scores.
+
+= Does Nexora Pulse work with WooCommerce or page builders? =
+Yes. Pulse analyzes the fully rendered content of any page — including WooCommerce product and shop pages, and pages built with Elementor, Gutenberg, or any other builder. It works at the page level, so there is no special setup required.
+
+= Does the plugin send my data to external servers? =
+No. Nexora Pulse does not route any data through Auralogics Labs servers. The only external calls are to your own Google Search Console and PageSpeed Insights accounts, using your own credentials, and only after you explicitly connect them.
 
 = Is Nexora Pulse free? =
 Yes. Every feature in this release is free, including Google Search Console and Core Web Vitals.
